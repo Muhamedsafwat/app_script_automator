@@ -35,6 +35,11 @@ export default function WorkflowCanvas() {
   const addWorkflowEdge =
     useWorkflowStore((s) => s.addEdge);
 
+  const setSelectedNodeId =
+    useWorkflowStore(
+      (s) => s.setSelectedNodeId
+    );
+
   const reactFlowNodes =
     mapWorkflowNodesToReactFlow(
       workflowNodes
@@ -78,6 +83,13 @@ export default function WorkflowCanvas() {
     );
   };
 
+  const handleNodeClick = (
+    _: unknown,
+    node: { id: string }
+  ) => {
+    setSelectedNodeId(node.id);
+  };
+
   return (
     <div className="w-full h-full">
       <ReactFlow
@@ -93,7 +105,8 @@ export default function WorkflowCanvas() {
         }}
         onConnect={handleConnect}
         onNodeDrag={handleNodeDrag}
-      
+        onNodeClick={handleNodeClick}
+        onPaneClick={() => setSelectedNodeId(null)}
       >
         <Controls />
         <Background

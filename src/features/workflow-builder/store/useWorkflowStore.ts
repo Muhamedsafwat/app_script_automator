@@ -59,6 +59,9 @@ const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   setNodes: (nodes: WorkflowNodeInstance[]) => set({ nodes }),
 
   setEdges: (edges: WorkflowEdge[]) => set({ edges }),
+
+  selectedNodeId: null,
+  setSelectedNodeId: (nodeId) => set({ selectedNodeId: nodeId }),
 }));
 
 export default useWorkflowStore;

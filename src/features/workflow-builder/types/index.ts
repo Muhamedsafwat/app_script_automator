@@ -5,6 +5,9 @@ export interface WorkflowStore {
   nodes: WorkflowNodeInstance[];
   edges: WorkflowEdge[];
   addNode: (definitionType: string, position: { x: number; y: number }) => void;
+  updateNodeConfig: (nodeId: string, config: Record<string, unknown>) => void;
+  selectedNodeId: string | null;
+  setSelectedNodeId: (nodeId: string | null) => void;
 }
 
 // node
