@@ -1,18 +1,27 @@
-import {
-  type Edge,
-  type Node,
-  type OnNodesChange,
-  type OnEdgesChange,
-  type OnConnect,
-} from '@xyflow/react';
+// workflow
+export interface WorkflowStore {
+  updateNodePosition: any;
+  addEdge: any;
+  nodes: WorkflowNodeInstance[];
+  edges: WorkflowEdge[];
+  addNode: (definitionType: string, position: { x: number; y: number }) => void;
+}
 
-export interface WorkflowState {
-  nodes: Node[];
-  edges: Edge[];
-  onNodesChange: OnNodesChange;
-  onEdgesChange: OnEdgesChange;
-  onConnect: OnConnect;
-  addNode: (node: Node) => void;
-  setNodes: (nodes: Node[]) => void;
-  setEdges: (edges: Edge[]) => void;
+// node
+export interface WorkflowNodeInstance {
+  id: string;
+  definitionType: string;
+  position: {
+    x: number;
+    y: number;
+  };
+
+  config: Record<string, unknown>;
+}
+
+// edge
+export interface WorkflowEdge {
+  id: string;
+  source: string;
+  target: string;
 }

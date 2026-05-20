@@ -1,5 +1,3 @@
-import React from "react";
-
 import WorkflowCanvas from "./WorkflowCanvas";
 import SideBar from "./SideBar";
 

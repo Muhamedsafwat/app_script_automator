@@ -1,35 +1,64 @@
 import { create } from "zustand";
-import {
-  type Edge,
-  type Node,
-  addEdge,
-  applyNodeChanges,
-  applyEdgeChanges,
-} from "@xyflow/react";
-import type { WorkflowState } from "../types";
 
-const useWorkflowStore = create<WorkflowState>((set, get) => ({
+import type {
+  WorkflowEdge,
+  WorkflowNodeInstance,
+  WorkflowStore,
+} from "../types";
+
+import type { Position } from "@/shared/types/position.type";
+
+const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   nodes: [],
   edges: [],
 
-  onNodesChange: (changes) => {
-    set({ nodes: applyNodeChanges(changes, get().nodes) });
+  addNode: (definitionType: string, position: Position) => {
+    set({
+      nodes: [
+        ...get().nodes,
+        {
+          id: crypto.randomUUID(),
+          definitionType,
+          position,
+          config: {},
+        },
+      ],
+    });
   },
 
-  onEdgesChange: (changes) => {
-    set({ edges: applyEdgeChanges(changes, get().edges) });
+  updateNodePosition: (nodeId: string, position: Position) => {
+    set({
+      nodes: get().nodes.map((node) =>
+        node.id === nodeId ? { ...node, position } : node,
+      ),
+    });
   },
 
-  onConnect: (params) => {
-    set({ edges: addEdge(params, get().edges) });
+  updateNodeConfig: (nodeId: string, config: Record<string, unknown>) => {
+    set({
+      nodes: get().nodes.map((node) =>
+        node.id === nodeId
+          ? {
+              ...node,
+              config: {
+                ...node.config,
+                ...config,
+              },
+            }
+          : node,
+      ),
+    });
   },
 
-  addNode: (node: Node) => {
-    set({ nodes: [...get().nodes, node] });
+  addEdge: (edge: WorkflowEdge) => {
+    set({
+      edges: [...get().edges, edge],
+    });
   },
 
-  setNodes: (nodes: Node[]) => set({ nodes }),
-  setEdges: (edges: Edge[]) => set({ edges }),
+  setNodes: (nodes: WorkflowNodeInstance[]) => set({ nodes }),
+
+  setEdges: (edges: WorkflowEdge[]) => set({ edges }),
 }));
 
 export default useWorkflowStore;
