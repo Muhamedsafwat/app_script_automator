@@ -3,7 +3,6 @@ import {
   Background,
   BackgroundVariant,
   Controls,
-  Node,
   Connection,
 } from "@xyflow/react";
 
@@ -11,7 +10,7 @@ import "@xyflow/react/dist/style.css";
 
 import useWorkflowStore from "@/features/workflow-builder/store/useWorkflowStore";
 
-import Ui from "@/features/workflow-builder/nodes/Ui";
+import Ui from "@/features/workflow-builder/components/Node";
 
 import {
   mapWorkflowNodesToReactFlow,
@@ -71,7 +70,7 @@ export default function WorkflowCanvas() {
 
   const handleNodeDrag = (
     _: unknown,
-    node: Node
+    node: { id: any; position: any; }
   ) => {
     updateNodePosition(
       node.id,

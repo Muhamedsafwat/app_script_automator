@@ -21,6 +21,7 @@ export default function SideBar() {
       >
         {node.ui.metadata.label}
       </button>) )}
+      <button onClick={() => console.log(useWorkflowStore.getState().nodes)}>log</button>
     </aside>
   );
 }
