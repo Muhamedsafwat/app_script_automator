@@ -1,6 +1,5 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { nodeRegistry, nodeIconStyleRegistry } from "@/shared/registry/node.registry";
-
+import { nodeRegistry } from "@/shared/registry/node.registry";
 
 interface WorkflowNodeData extends Record<string, unknown> {
   definitionType: string;
@@ -9,13 +8,23 @@ interface WorkflowNodeData extends Record<string, unknown> {
 
 const Ui = ({ data, isConnectable }: NodeProps) => {
   const nodeData = data as WorkflowNodeData;
-  const nodeDef = nodeRegistry[nodeData.definitionType as keyof typeof nodeRegistry];
-  const label = nodeDef?.ui.metadata.label || "Custom Node";
-  const category = nodeDef?.ui.metadata.category || "General";
-  const Icon = nodeDef?.ui.metadata.icon;
 
-  const categoryKey = category.toUpperCase() as keyof typeof nodeIconStyleRegistry;
-  const iconStyle = nodeIconStyleRegistry[categoryKey] || "bg-slate-50 text-slate-700 hover:bg-blue-50 group-hover:text-blue-600";
+  // Find the category registry and node definition inside the nodeRegistry array
+  let foundCategory: any = null;
+  let foundNodeDef: any = null;
+
+  for (const categoryRegistry of nodeRegistry) {
+    if (nodeData.definitionType in categoryRegistry) {
+      foundCategory = categoryRegistry;
+      foundNodeDef = categoryRegistry[nodeData.definitionType as keyof typeof categoryRegistry];
+      break;
+    }
+  }
+
+  const label = foundNodeDef?.ui.metadata.label || "Custom Node";
+  const category = foundCategory?.metadata.category || "General";
+  const Icon = foundCategory?.metadata.icon;
+  const iconStyle = foundCategory?.metadata.style || "bg-slate-50 text-slate-700 hover:bg-blue-50 group-hover:text-blue-600";
 
   return (
     <div className="bg-slate-600 border-2 border-slate-100 rounded-2xl shadow-sm p-4 min-w-55 transition-all hover:shadow-md group">
@@ -33,7 +42,7 @@ const Ui = ({ data, isConnectable }: NodeProps) => {
           </div>
         )}
         <div className="flex flex-col">
-          <span className="text-[9px] uppercase tracking-wider font-bold text-slate-300">
+          <span className="text-[9px] uppercase tracking-wider font-bold text-slate-400">
             {category}
           </span>
           <h3 className="font-bold text-slate-200 text-sm leading-tight ">
