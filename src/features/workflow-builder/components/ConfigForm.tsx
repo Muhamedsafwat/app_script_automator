@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import useWorkflowStore from "../store/useWorkflowStore";
 import { nodeRegistry } from "@/shared/registry/node.registry";
 import { FiX } from "react-icons/fi";
+import { validateForm } from "@/shared/utils/validator";
 
 export default function ConfigForm() {
   const selectedNodeId = useWorkflowStore((s) => s.selectedNodeId);
@@ -11,28 +13,68 @@ export default function ConfigForm() {
     s.nodes.find((n) => n.id === selectedNodeId)
   );
 
-  if (!node) return null;
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   // Find the category registry and node definition inside the nodeRegistry array
   let foundCategory: any = null;
   let foundNodeDef: any = null;
 
-  for (const categoryRegistry of nodeRegistry) {
-    if (node.definitionType in categoryRegistry) {
-      foundCategory = categoryRegistry;
-      foundNodeDef = categoryRegistry[node.definitionType as keyof typeof categoryRegistry];
-      break;
+  if (node) {
+    for (const categoryRegistry of nodeRegistry) {
+      if (node.definitionType in categoryRegistry) {
+        foundCategory = categoryRegistry;
+        foundNodeDef = categoryRegistry[node.definitionType as keyof typeof categoryRegistry];
+        break;
+      }
     }
   }
 
-  if (!foundNodeDef) return null;
+  // Validate initial config or when node selection changes
+  useEffect(() => {
+    setTouched({});
+    if (node && foundNodeDef?.schema) {
+      const validation = validateForm(foundNodeDef.schema, node.config);
+      setErrors(validation.errors);
+    } else {
+      setErrors({});
+    }
+  }, [selectedNodeId, node?.definitionType]);
+
+  if (!node || !foundNodeDef) return null;
 
   const metadata = foundNodeDef.ui.metadata;
   const fields = foundNodeDef.ui.fields;
   const CategoryIcon = foundCategory?.metadata.icon;
 
   const handleFieldChange = (key: string, value: string) => {
+    const updatedConfig = { ...node.config, [key]: value };
     updateNodeConfig(node.id, { [key]: value });
+
+    if (foundNodeDef?.schema) {
+      const validation = validateForm(foundNodeDef.schema, updatedConfig);
+      setErrors(validation.errors);
+    }
+
+    setTouched((prev) => ({ ...prev, [key]: true }));
+  };
+
+  const handleSave = () => {
+    if (foundNodeDef?.schema) {
+      const validation = validateForm(foundNodeDef.schema, node.config);
+      if (!validation.success) {
+        setErrors(validation.errors);
+        
+        // Touch all fields to reveal errors
+        const allTouched: Record<string, boolean> = {};
+        fields.forEach((field: any) => {
+          allTouched[field.key] = true;
+        });
+        setTouched(allTouched);
+        return;
+      }
+    }
+    setSelectedNodeId(null);
   };
 
   return (
@@ -70,9 +112,10 @@ export default function ConfigForm() {
         </div>
 
         {/* Modal Body / Dynamic Form */}
-        <div className="p-6 flex flex-col gap-5 max-h-[400px] overflow-y-auto">
+        <div className="p-6 flex flex-col gap-5 max-h-100 overflow-y-auto">
           {fields.map((field: any) => {
             const currentValue = String(node.config[field.key] || "");
+            const hasError = touched[field.key] && errors[field.key];
             
             return (
               <div key={field.key} className="flex flex-col gap-1.5">
@@ -84,7 +127,11 @@ export default function ConfigForm() {
                   <textarea
                     value={currentValue}
                     onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-2xl p-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none min-h-[100px] transition-all resize-none"
+                    className={`w-full bg-slate-950 border rounded-2xl p-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none min-h-25 transition-all resize-none ${
+                      hasError
+                        ? "border-rose-500/80 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+                        : "border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    }`}
                     placeholder={`Enter ${field.label.toLowerCase()}...`}
                   />
                 ) : (
@@ -92,9 +139,19 @@ export default function ConfigForm() {
                     type="text"
                     value={currentValue}
                     onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-2xl px-4 py-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none transition-all"
+                    className={`w-full bg-slate-950 border rounded-2xl px-4 py-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none transition-all ${
+                      hasError
+                        ? "border-rose-500/80 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+                        : "border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    }`}
                     placeholder={`Enter ${field.label.toLowerCase()}...`}
                   />
+                )}
+
+                {hasError && (
+                  <span className="text-[11px] text-rose-400 font-medium px-1 flex items-center gap-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                    ⚠️ {errors[field.key]}
+                  </span>
                 )}
               </div>
             );
@@ -110,7 +167,7 @@ export default function ConfigForm() {
         {/* Modal Footer */}
         <div className="p-5 border-t border-slate-800 bg-slate-950/40 flex justify-end">
           <button
-            onClick={() => setSelectedNodeId(null)}
+            onClick={handleSave}
             className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-2xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 transition-all text-center"
           >
             Save & Close

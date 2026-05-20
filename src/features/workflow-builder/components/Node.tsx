@@ -27,25 +27,25 @@ const Ui = ({ data, isConnectable }: NodeProps) => {
   const iconStyle = foundCategory?.metadata.style || "bg-slate-50 text-slate-700 hover:bg-blue-50 group-hover:text-blue-600";
 
   return (
-    <div className="bg-slate-600 border-2 border-slate-100 rounded-2xl shadow-sm p-4 min-w-55 transition-all hover:shadow-md group">
+    <div className="bg-slate-600 border border-slate-100 rounded-2xl shadow-sm p-4 min-w-40 transition-all hover:shadow-md group">
       <Handle
         type="target"
         position={Position.Left}
         isConnectable={isConnectable}
-        className="w-4 h-4 bg-slate-200 border-2 border-white group-hover:bg-blue-500 group-hover:scale-110 transition-all duration-200"
+        className="w-2.5! h-2.5! bg-slate-200 border-2 border-white group-hover:bg-blue-500 group-hover:scale-125 transition-all duration-200"
       />
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {Icon && (
-          <div className={`p-2.5 rounded-xl flex items-center justify-center transition-colors ${iconStyle}`}>
+          <div className={`p-2 rounded-xl flex items-center justify-center transition-colors ${iconStyle}`}>
             <Icon size={20} />
           </div>
         )}
         <div className="flex flex-col">
-          <span className="text-[9px] uppercase tracking-wider font-bold text-slate-400">
+          <span className="text-xs uppercase tracking-wider font-bold text-slate-400">
             {category}
           </span>
-          <h3 className="font-bold text-slate-200 text-sm leading-tight ">
+          <h3 className="text-slate-200 text-sm leading-tight ">
             {label}
           </h3>
         </div>
@@ -55,7 +55,7 @@ const Ui = ({ data, isConnectable }: NodeProps) => {
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
-        className="w-4 h-4 bg-blue-500 border-2 border-white group-hover:scale-110 transition-all duration-200"
+        className="w-2.5! h-2.5! bg-blue-500 border-2 border-white group-hover:scale-110 transition-all duration-200"
       />
     </div>
   );

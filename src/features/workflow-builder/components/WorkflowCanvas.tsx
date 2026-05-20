@@ -98,11 +98,6 @@ export default function WorkflowCanvas() {
         fitView
         snapToGrid
         nodeTypes={nodeTypes}
-        defaultViewport={{
-          x: 0,
-          y: 0,
-          zoom: 0.6,
-        }}
         onConnect={handleConnect}
         onNodeDrag={handleNodeDrag}
         onNodeClick={handleNodeClick}
