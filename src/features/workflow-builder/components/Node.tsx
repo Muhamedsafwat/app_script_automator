@@ -3,6 +3,7 @@ import { nodeRegistry } from "@/shared/registry/node.registry";
 
 interface WorkflowNodeData extends Record<string, unknown> {
   definitionType: string;
+  kind: "trigger" | "step";
   config: Record<string, unknown>;
 }
 
@@ -28,12 +29,12 @@ const Ui = ({ data, isConnectable }: NodeProps) => {
 
   return (
     <div className="bg-slate-600 border border-slate-100 rounded-2xl shadow-sm p-4 min-w-40 transition-all hover:shadow-md group">
-      <Handle
+      {nodeData.kind === "step" && <Handle
         type="target"
         position={Position.Left}
         isConnectable={isConnectable}
         className="w-2.5! h-2.5! bg-slate-200 border-2 border-white group-hover:bg-blue-500 group-hover:scale-125 transition-all duration-200"
-      />
+      />}
 
       <div className="flex items-center gap-2">
         {Icon && (

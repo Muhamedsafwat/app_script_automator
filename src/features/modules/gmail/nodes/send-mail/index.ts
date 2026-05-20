@@ -5,8 +5,9 @@ import { generateSendEmail } from "./generator";
 
 // the actual node
 export const sendEmailNode: WorkflowNodeDefinition<typeof SendEmailSchema> = {
-    type: "send-email",
-    schema: SendEmailSchema,
-    ui: sendEmailUI,
-    generator: generateSendEmail,
-}
+  type: "send-email",
+  kind: "step",
+  schema: SendEmailSchema,
+  ui: sendEmailUI,
+  generator: generateSendEmail,
+};

@@ -11,6 +11,7 @@ export function mapWorkflowNodesToReactFlow(
     position: node.position,
     data: {
       definitionType: node.definitionType,
+      kind: node.kind,
       config: node.config,
     },
   }));

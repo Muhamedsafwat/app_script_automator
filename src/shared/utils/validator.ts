@@ -9,12 +9,9 @@ export interface ValidationResult {
   errors: ValidationError;
 }
 
-/**
- * Validates form values against a Zod schema and returns formatted errors
- */
 export function validateForm(
   schema: z.ZodTypeAny,
-  values: Record<string, unknown>
+  values: Record<string, unknown>,
 ): ValidationResult {
   const result = schema.safeParse(values);
   if (result.success) {

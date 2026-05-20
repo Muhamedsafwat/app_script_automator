@@ -8,8 +8,8 @@ export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
-  const handleAddNode = (definitionType: string) => {
-    addNode(definitionType, {
+  const handleAddNode = (definitionType: string, kind: "trigger" | "step") => {
+    addNode(definitionType, kind, {
       x: Math.random() * 200 + 100,
       y: Math.random() * 200 + 100,
     });
@@ -84,7 +84,7 @@ export default function SideBar() {
                       {nodes.map((node) => (
                         <button
                           key={node.type}
-                          onClick={() => handleAddNode(node.type)}
+                          onClick={() => handleAddNode(node.type, node.kind)}
                           className="w-full text-left py-1.5 px-3 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-slate-700/40 border border-transparent hover:border-slate-700/30 transition-all"
                         >
                           {node.ui.metadata.label}

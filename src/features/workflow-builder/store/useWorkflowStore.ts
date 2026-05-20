@@ -12,13 +12,18 @@ const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   nodes: [],
   edges: [],
 
-  addNode: (definitionType: string, position: Position) => {
+  addNode: (
+    definitionType: string,
+    kind: "step" | "trigger",
+    position: Position,
+  ) => {
     set({
       nodes: [
         ...get().nodes,
         {
           id: crypto.randomUUID(),
           definitionType,
+          kind,
           position,
           config: {},
         },

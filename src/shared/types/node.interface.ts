@@ -3,6 +3,7 @@ import { z } from "zod";
 // ----------- Node Interface ------------- //
 export interface WorkflowNodeDefinition<TSchema extends z.ZodTypeAny> {
   type: string;
+  kind: "step" | "trigger";
   schema: TSchema;
   ui: NodeUIConfig<z.infer<TSchema>>;
   generator: NodeGenerator<z.infer<TSchema>>;
