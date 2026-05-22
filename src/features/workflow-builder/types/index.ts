@@ -4,10 +4,12 @@ export interface WorkflowStore {
   addEdge: any;
   nodes: WorkflowNodeInstance[];
   edges: WorkflowEdge[];
+
+  // add node
   addNode: (
     definitionType: string,
     kind: "trigger" | "step",
-    position: { x: number; y: number }
+    position: { x: number; y: number },
   ) => void;
   updateNodeConfig: (nodeId: string, config: Record<string, unknown>) => void;
   selectedNodeId: string | null;

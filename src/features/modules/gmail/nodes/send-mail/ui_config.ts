@@ -12,16 +12,22 @@ export const sendEmailUI: NodeUIConfig<SendEmailConfig> = {
       key: "to",
       label: "Recipient",
       component: "input",
+      type: "email",
+      allowBindings: true,
     },
     {
       key: "subject",
       label: "Subject",
       component: "input",
+      type: "string",
+      allowBindings: true,
     },
     {
       key: "body",
       label: "Body",
       component: "textarea",
+      type: "string",
+      allowBindings: true,
     },
   ],
 };

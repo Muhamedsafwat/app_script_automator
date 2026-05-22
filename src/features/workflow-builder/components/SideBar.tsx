@@ -3,12 +3,15 @@ import useWorkflowStore from "../store/useWorkflowStore";
 import { nodeRegistry } from "@/shared/registry/node.registry";
 import { FiPlus, FiChevronDown, FiChevronRight } from "react-icons/fi";
 
+import { workflowToDSL } from "@/features/workflow-transformer/workflow-to-dsl";
+
 export default function SideBar() {
   const addNode = useWorkflowStore((s) => s.addNode);
   const [isOpen, setIsOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   const handleAddNode = (definitionType: string, kind: "trigger" | "step") => {
+     
     addNode(definitionType, kind, {
       x: Math.random() * 200 + 100,
       y: Math.random() * 200 + 100,
@@ -51,7 +54,7 @@ export default function SideBar() {
           </div>
 
           <div className="flex flex-col gap-2 max-h-75 overflow-y-auto pr-1">
-            {nodeRegistry.map((categoryObj, index) => {
+            {Object.values(nodeRegistry).map((categoryObj, index) => {
               const metadata = categoryObj.metadata;
               const categoryName = metadata.category;
               const CategoryIcon = metadata.icon;
@@ -101,7 +104,7 @@ export default function SideBar() {
           </div>
           
           <button 
-            onClick={() => console.log(useWorkflowStore.getState().nodes)}
+            onClick={() => console.log(workflowToDSL(useWorkflowStore.getState()))}
             className="w-full mt-2 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all text-center"
           >
             Log Nodes Store

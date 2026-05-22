@@ -14,7 +14,7 @@ const Ui = ({ data, isConnectable }: NodeProps) => {
   let foundCategory: any = null;
   let foundNodeDef: any = null;
 
-  for (const categoryRegistry of nodeRegistry) {
+  for (const categoryRegistry of Object.values(nodeRegistry)) {
     if (nodeData.definitionType in categoryRegistry) {
       foundCategory = categoryRegistry;
       foundNodeDef = categoryRegistry[nodeData.definitionType as keyof typeof categoryRegistry];
