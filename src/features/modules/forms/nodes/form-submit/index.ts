@@ -9,4 +9,5 @@ export const formSubmitNode: WorkflowNodeDefinition<typeof FormSubmitSchema> = {
   schema: FormSubmitSchema,
   ui: formSubmitUI,
   generator: generateFormSubmit,
+  canHaveOutput: true,
 };

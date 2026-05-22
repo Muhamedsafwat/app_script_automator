@@ -7,7 +7,7 @@ export interface WorkflowNodeDefinition<TSchema extends z.ZodTypeAny> {
   schema: TSchema;
   ui: NodeUIConfig<z.infer<TSchema>>;
   generator: NodeGenerator<z.infer<TSchema>>;
-  output?: NodeOutput[] | null;
+  output?: NodeOutput[];
   canHaveOutput?: boolean;
 }
 
