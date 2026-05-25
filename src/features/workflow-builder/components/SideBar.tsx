@@ -104,7 +104,7 @@ export default function SideBar() {
           </div>
           
           <button 
-            onClick={() => console.log(workflowToDSL(useWorkflowStore.getState()))}
+            onClick={() => console.log(useWorkflowStore.getState())}
             className="w-full mt-2 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all text-center"
           >
             Log Nodes Store

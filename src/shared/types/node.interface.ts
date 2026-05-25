@@ -8,7 +8,7 @@ export interface WorkflowNodeDefinition<TSchema extends z.ZodTypeAny> {
   ui: NodeUIConfig<z.infer<TSchema>>;
   generator: NodeGenerator<z.infer<TSchema>>;
   output?: NodeOutput[];
-  canHaveOutput?: boolean;
+  canHaveOutput: boolean;
 }
 
 // --------------- Node UI config ----------- //
@@ -33,7 +33,15 @@ export interface NodeUIConfig<T> {
 export interface NodeOutput {
   name: string;
   type: FieldType;
+  value: string;
 }
+
+export type GroupedNodeOutput = {
+  [key in FieldType]: {
+    name: string;
+    value: string;
+  }[];
+};
 
 // ------------ Node generator ---------- //
 export type NodeGenerator<T> = (config: T) => string;

@@ -38,6 +38,8 @@ export const useConfigForm = () => {
   // Validate on node change
   useEffect(() => {
     setTouched({});
+    // Sync local outputs state with the newly selected node's config
+    setOutputs((node?.config?.outputs as any) || {});
 
     // No early return; provide safe defaults for missing node/definition
     if (node && foundNodeDef?.schema) {
@@ -49,17 +51,13 @@ export const useConfigForm = () => {
   }, [selectedNodeId, node?.definitionType]);
 
   // Early return removed to maintain Hook order
-
   const metadata = foundNodeDef?.ui?.metadata || {};
   const fields = foundNodeDef?.ui?.fields || [];
   const CategoryIcon = foundCategory?.metadata?.icon;
-  const availableBindings = node ? resolveAvailableBindings(workflowNodes, node.id) : [];
 
+  const availableBindings = node ? resolveAvailableBindings(node.id) : [];
   // ---- Output handling ----------------------------------------------------
-  // Node definitions can optionally allow custom outputs via the
-  // `canHaveOutput` flag. When true we expose a UI for managing a
-  // collection of outputs where each output is identified by a name and
-  // stores a type and a value.
+
   const canHaveOutput: boolean = !!foundNodeDef?.canHaveOutput;
   const [outputs, setOutputs] = useState<
     Record<string, { type: string; value: string }>
@@ -72,6 +70,7 @@ export const useConfigForm = () => {
   const updateOutputs = (
     newOutputs: Record<string, { type: string; value: string }>,
   ) => {
+    if (!node) return;
     setOutputs(newOutputs);
     updateNodeConfig(node.id, { outputs: newOutputs });
   };
@@ -92,9 +91,11 @@ export const useConfigForm = () => {
     field: "type" | "value",
     value: string,
   ) => {
+    // Ensure the output entry exists; if missing, initialise with default values
+    const existing = outputs[key] ?? { type: "string", value: "" };
     const newOutputs = {
       ...outputs,
-      [key]: { ...outputs[key], [field]: value },
+      [key]: { ...existing, [field]: value },
     };
     updateOutputs(newOutputs);
   };
@@ -107,6 +108,7 @@ export const useConfigForm = () => {
   // -----------------------------------------------------------------------
 
   const handleFieldChange = (key: string, value: unknown) => {
+    if (!node) return;
     const updatedConfig = { ...node.config, [key]: value };
     updateNodeConfig(node.id, { [key]: value });
 
@@ -119,6 +121,10 @@ export const useConfigForm = () => {
   };
 
   const handleSave = () => {
+    if (!node) {
+      // No node selected; nothing to save
+      return;
+    }
     if (foundNodeDef?.schema) {
       const validation = validateForm(foundNodeDef.schema, node.config);
       if (!validation.success) {
@@ -136,9 +142,9 @@ export const useConfigForm = () => {
 
   // Helper to rename an output entry.
   const renameOutput = (oldKey: string, newKey: string) => {
-    if (!outputs[oldKey]) return;
-    const newOutputs = { ...outputs };
-    newOutputs[newKey] = newOutputs[oldKey];
+    const oldOutput = outputs[oldKey];
+    if (!oldOutput) return;
+    const newOutputs = { ...outputs, [newKey]: oldOutput };
     delete newOutputs[oldKey];
     updateOutputs(newOutputs);
   };

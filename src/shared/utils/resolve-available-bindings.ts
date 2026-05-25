@@ -1,27 +1,43 @@
-import type { WorkflowNodeInstance } from "@/features/workflow-builder/types";
-import { resolveNodeOutputs } from "./resolve-node-ouptut";
+import { useWorkflowStore } from "@/features/workflow-builder";
+import {
+  NodeOutput,
+  GroupedNodeOutput,
+  FieldType,
+} from "../types/node.interface";
 
 export function resolveAvailableBindings(
-  workflowNodes: WorkflowNodeInstance[],
-
   currentNodeId: string,
-) {
-  const variables = [];
+): GroupedNodeOutput {
+  const { edges, nodes } = useWorkflowStore.getState();
+  const inputEdge = edges.find((edge) => edge.target == currentNodeId);
+  const sourceNode = nodes.find((node) => node.id == inputEdge?.source);
 
-  for (const node of workflowNodes) {
-    if (node.id === currentNodeId) continue;
+  const outputs: NodeOutput[] = (sourceNode?.config?.outputs ??
+    []) as NodeOutput[];
 
-    const outputs = resolveNodeOutputs(node);
+  const grouped = Object.entries(outputs).reduce(
+    (acc, [name, field]) => {
+      const type = field.type;
 
-    for (const output of Object.values(outputs)) {
-      variables.push({
-        nodeId: node.id,
-        field: output.name,
-        type: output.type,
-        label: `${node.definitionType}.${output.name}`,
+      if (!acc[type]) {
+        acc[type] = [];
+      }
+
+      acc[type].push({
+        name,
+        value: field.value,
       });
-    }
-  }
 
-  return variables;
+      return acc;
+    },
+    {} as Record<
+      FieldType,
+      {
+        name: string;
+        value: string;
+      }[]
+    >,
+  );
+  console.log(grouped);
+  return grouped;
 }

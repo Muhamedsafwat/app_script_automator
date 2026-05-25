@@ -40,9 +40,8 @@ export const ConfigFormBody: React.FC<ConfigFormBodyProps> = ({
         const mode = bindingModes[field.key] || "static";
         const currentValue = node.config[field.key] as any;
         const hasError = touched[field.key] && errors[field.key];
-        const compatibleBindings = availableBindings.filter(
-          (binding: any) => binding.type === field.type
-        );
+        
+        const compatibleBindings = availableBindings?.[field.type];
         return (
           <div key={field.key} className="flex flex-col gap-2">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -106,7 +105,7 @@ export const ConfigFormBody: React.FC<ConfigFormBodyProps> = ({
               <select
                 value={currentValue?.sourceField || ""}
                 onChange={(e) => {
-                  const selected = compatibleBindings.find(
+                  const selected = compatibleBindings?.find(
                     (b: any) => b.field === e.target.value
                   );
                   if (!selected) return;
@@ -119,9 +118,9 @@ export const ConfigFormBody: React.FC<ConfigFormBodyProps> = ({
                 className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-slate-100 focus:outline-none"
               >
                 <option value="">Select Variable</option>
-                {compatibleBindings.map((binding: any) => (
+                {compatibleBindings?.map((binding: any) => (
                   <option key={`${binding.nodeId}-${binding.field}`} value={binding.field}>
-                    {binding.label}
+                    {binding.name}
                   </option>
                 ))}
               </select>
