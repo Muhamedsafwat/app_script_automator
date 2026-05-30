@@ -35,13 +35,13 @@ export interface NodeOutput {
   type: FieldType;
 }
 
-export type GroupedNodeOutput = {
+export type GroupedNodeOutput = Partial<{
   [key in FieldType]: {
     name: string;
     field: string;
     nodeId: string;
   }[];
-};
+}>;
 
 // ------------ Node generator ---------- //
 export type NodeGenerator<T> = (config: T) => string;

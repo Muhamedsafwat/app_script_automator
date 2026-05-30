@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FiX } from "react-icons/fi";
-import { FieldType } from "../../../shared/types/node.interface";
+import { FieldType, GroupedNodeOutput } from "../../../shared/types/node.interface";
 
 
 interface ConfigFormBodyProps {
@@ -11,11 +11,10 @@ interface ConfigFormBodyProps {
   handleFieldChange: (key: string, value: unknown) => void;
   errors: Record<string, string>;
   touched: Record<string, boolean>;
-  availableBindings: any[];
+  availableBindings: GroupedNodeOutput;
   canHaveOutput: boolean;
-  outputs: Record<string, { type: FieldType; value: string }>;
+  outputs: Record<string, { type: FieldType }>;
   addOutput: (name: string, type: FieldType) => void;
-  changeOutput: (key: string, field: "type" | "value", value: string) => void;
   deleteOutput: (key: string) => void;
 }
 
@@ -31,7 +30,6 @@ export const ConfigFormBody: React.FC<ConfigFormBodyProps> = ({
   canHaveOutput,
   outputs,
   addOutput,
-  changeOutput,
   deleteOutput,
 }) => {
   const [newFieldName, setNewFieldName] = useState("");
@@ -52,7 +50,7 @@ export const ConfigFormBody: React.FC<ConfigFormBodyProps> = ({
         const currentValue = node.config[field.key] as any;
         const hasError = mode === "static" && touched[field.key] && errors[field.key];
         
-        const compatibleBindings = availableBindings?.[field.type];
+        const compatibleBindings = availableBindings?.[field.type as FieldType];
         return (
           <div key={field.key} className="flex flex-col gap-2">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">

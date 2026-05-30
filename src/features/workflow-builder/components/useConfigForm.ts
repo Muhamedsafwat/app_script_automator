@@ -3,6 +3,7 @@ import useWorkflowStore from "../store/useWorkflowStore";
 import { nodeRegistry } from "@/shared/registry/node.registry";
 import { validateForm } from "@/shared/utils/validator";
 import { resolveAvailableBindings } from "@/shared/utils/resolve-available-bindings";
+import { FieldType, GroupedNodeOutput } from "@/shared/types/node.interface";
 
 export const useConfigForm = () => {
   const selectedNodeId = useWorkflowStore((s) => s.selectedNodeId);
@@ -55,46 +56,29 @@ export const useConfigForm = () => {
   const fields = foundNodeDef?.ui?.fields || [];
   const CategoryIcon = foundCategory?.metadata?.icon;
 
-  const availableBindings = node ? resolveAvailableBindings(node.id) : [];
+  const availableBindings: GroupedNodeOutput = node
+    ? resolveAvailableBindings(node.id)
+    : {};
   // ---- Output handling ----------------------------------------------------
 
   const canHaveOutput: boolean = !!foundNodeDef?.canHaveOutput;
-  const [outputs, setOutputs] = useState<
-    Record<string, { type: string; value: string }>
-  >(
+  const [outputs, setOutputs] = useState<Record<string, { type: FieldType }>>(
     // Initialise from existing config if present
     (node?.config?.outputs as any) || {},
   );
 
   // Whenever outputs change we persist them back to the node config.
-  const updateOutputs = (
-    newOutputs: Record<string, { type: string; value: string }>,
-  ) => {
+  const updateOutputs = (newOutputs: Record<string, { type: FieldType }>) => {
     if (!node) return;
     setOutputs(newOutputs);
     updateNodeConfig(node.id, { outputs: newOutputs });
   };
 
   // Helper to add a fresh output entry.
-  const addOutput = (name: string, type: string) => {
+  const addOutput = (name: string, type: FieldType) => {
     const newOutputs = {
       ...outputs,
       [name]: { type, value: "" },
-    };
-    updateOutputs(newOutputs);
-  };
-
-  // Helper to modify an existing output field.
-  const changeOutput = (
-    key: string,
-    field: "type" | "value",
-    value: string,
-  ) => {
-    // Ensure the output entry exists; if missing, initialise with default values
-    const existing = outputs[key] ?? { type: "string", value: "" };
-    const newOutputs = {
-      ...outputs,
-      [key]: { ...existing, [field]: value },
     };
     updateOutputs(newOutputs);
   };
@@ -139,8 +123,6 @@ export const useConfigForm = () => {
     setSelectedNodeId(null);
   };
 
-
-
   return {
     // State
     errors,
@@ -156,7 +138,6 @@ export const useConfigForm = () => {
     canHaveOutput,
     outputs,
     addOutput,
-    changeOutput,
     deleteOutput,
     // Handlers
     handleFieldChange,

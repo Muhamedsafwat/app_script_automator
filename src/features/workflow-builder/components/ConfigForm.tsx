@@ -16,7 +16,6 @@ export default function ConfigForm() {
     canHaveOutput,
     outputs,
     addOutput,
-    changeOutput,
     deleteOutput,
     handleSave,
     setSelectedNodeId,
@@ -55,7 +54,6 @@ export default function ConfigForm() {
           canHaveOutput={canHaveOutput}
           outputs={outputs}
           addOutput={addOutput}
-          changeOutput={changeOutput}
           deleteOutput={deleteOutput}
         />
         <ConfigFormFooter onSave={handleSave} />
