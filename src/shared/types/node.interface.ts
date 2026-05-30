@@ -33,13 +33,13 @@ export interface NodeUIConfig<T> {
 export interface NodeOutput {
   name: string;
   type: FieldType;
-  value: string;
 }
 
 export type GroupedNodeOutput = {
   [key in FieldType]: {
     name: string;
-    value: string;
+    field: string;
+    nodeId: string;
   }[];
 };
 

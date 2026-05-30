@@ -18,7 +18,6 @@ export default function ConfigForm() {
     addOutput,
     changeOutput,
     deleteOutput,
-    renameOutput,
     handleSave,
     setSelectedNodeId,
     node,
@@ -58,7 +57,6 @@ export default function ConfigForm() {
           addOutput={addOutput}
           changeOutput={changeOutput}
           deleteOutput={deleteOutput}
-          renameOutput={renameOutput}
         />
         <ConfigFormFooter onSave={handleSave} />
       </div>

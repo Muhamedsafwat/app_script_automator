@@ -76,11 +76,10 @@ export const useConfigForm = () => {
   };
 
   // Helper to add a fresh output entry.
-  const addOutput = () => {
-    const uniqueKey = `output_${Date.now()}`;
+  const addOutput = (name: string, type: string) => {
     const newOutputs = {
       ...outputs,
-      [uniqueKey]: { type: "string", value: "" },
+      [name]: { type, value: "" },
     };
     updateOutputs(newOutputs);
   };
@@ -140,14 +139,7 @@ export const useConfigForm = () => {
     setSelectedNodeId(null);
   };
 
-  // Helper to rename an output entry.
-  const renameOutput = (oldKey: string, newKey: string) => {
-    const oldOutput = outputs[oldKey];
-    if (!oldOutput) return;
-    const newOutputs = { ...outputs, [newKey]: oldOutput };
-    delete newOutputs[oldKey];
-    updateOutputs(newOutputs);
-  };
+
 
   return {
     // State
@@ -166,7 +158,6 @@ export const useConfigForm = () => {
     addOutput,
     changeOutput,
     deleteOutput,
-    renameOutput,
     // Handlers
     handleFieldChange,
     handleSave,

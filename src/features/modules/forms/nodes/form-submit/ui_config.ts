@@ -13,7 +13,6 @@ export const formSubmitUI: NodeUIConfig<FormSubmitConfig> = {
       label: "Google Form ID",
       component: "input",
       type: "string",
-      allowBindings: true,
     },
   ],
 };

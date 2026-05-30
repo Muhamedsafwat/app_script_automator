@@ -15,29 +15,23 @@ export function resolveAvailableBindings(
   const outputs: NodeOutput[] = (sourceNode?.config?.outputs ??
     []) as NodeOutput[];
 
-  const grouped = Object.entries(outputs).reduce(
-    (acc, [name, field]) => {
-      const type = field.type;
+  const sourceNodeId = sourceNode?.id ?? "";
 
-      if (!acc[type]) {
-        acc[type] = [];
-      }
+  const grouped = Object.entries(outputs).reduce((acc, [name, field]) => {
+    const type: FieldType = field.type;
 
-      acc[type].push({
-        name,
-        value: field.value,
-      });
+    if (!acc[type]) {
+      acc[type] = [];
+    }
 
-      return acc;
-    },
-    {} as Record<
-      FieldType,
-      {
-        name: string;
-        value: string;
-      }[]
-    >,
-  );
+    acc[type].push({
+      name,
+      field: name,
+      nodeId: sourceNodeId,
+    });
+
+    return acc;
+  }, {} as GroupedNodeOutput);
   console.log(grouped);
   return grouped;
 }

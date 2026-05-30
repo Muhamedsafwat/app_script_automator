@@ -2,8 +2,8 @@ import { useState } from "react";
 import useWorkflowStore from "../store/useWorkflowStore";
 import { nodeRegistry } from "@/shared/registry/node.registry";
 import { FiPlus, FiChevronDown, FiChevronRight } from "react-icons/fi";
-
 import { workflowToDSL } from "@/features/workflow-transformer/workflow-to-dsl";
+
 
 export default function SideBar() {
   const addNode = useWorkflowStore((s) => s.addNode);
@@ -104,7 +104,7 @@ export default function SideBar() {
           </div>
           
           <button 
-            onClick={() => console.log(useWorkflowStore.getState())}
+            onClick={() => console.log(workflowToDSL(useWorkflowStore.getState()))}
             className="w-full mt-2 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all text-center"
           >
             Log Nodes Store

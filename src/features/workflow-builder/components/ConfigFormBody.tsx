@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiX } from "react-icons/fi";
+import { FieldType } from "../../../shared/types/node.interface";
+
 
 interface ConfigFormBodyProps {
   fields: any[];
@@ -11,11 +13,10 @@ interface ConfigFormBodyProps {
   touched: Record<string, boolean>;
   availableBindings: any[];
   canHaveOutput: boolean;
-  outputs: Record<string, { type: string; value: string }>;
-  addOutput: () => void;
+  outputs: Record<string, { type: FieldType; value: string }>;
+  addOutput: (name: string, type: FieldType) => void;
   changeOutput: (key: string, field: "type" | "value", value: string) => void;
   deleteOutput: (key: string) => void;
-  renameOutput: (oldKey: string, newKey: string) => void;
 }
 
 export const ConfigFormBody: React.FC<ConfigFormBodyProps> = ({
@@ -32,14 +33,24 @@ export const ConfigFormBody: React.FC<ConfigFormBodyProps> = ({
   addOutput,
   changeOutput,
   deleteOutput,
-  renameOutput,
 }) => {
+  const [newFieldName, setNewFieldName] = useState("");
+  const [newFieldType, setNewFieldType] = useState<FieldType>("string");
+
+  const handleAddField = () => {
+    const trimmed = newFieldName.trim();
+    if (!trimmed) return;
+    addOutput(trimmed, newFieldType);
+    setNewFieldName("");
+    setNewFieldType("string");
+  };
+
   return (
     <div className="p-6 flex flex-col gap-5 max-h-100 overflow-y-auto">
       {fields.map((field: any) => {
         const mode = bindingModes[field.key] || "static";
         const currentValue = node.config[field.key] as any;
-        const hasError = touched[field.key] && errors[field.key];
+        const hasError = mode === "static" && touched[field.key] && errors[field.key];
         
         const compatibleBindings = availableBindings?.[field.type];
         return (
@@ -142,28 +153,12 @@ export const ConfigFormBody: React.FC<ConfigFormBodyProps> = ({
           <div className="flex flex-col gap-2">
             {Object.entries(outputs).map(([key, val]: any) => (
               <div key={key} className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={key}
-                  onChange={(e) => renameOutput(key, e.target.value)}
-                  className="bg-slate-800 text-slate-100 px-2 py-1 rounded w-1/3"
-                />
-                <select
-                  value={val.type}
-                  onChange={(e) => changeOutput(key, "type", e.target.value)}
-                  className="bg-slate-800 text-slate-100 px-2 py-1 rounded"
-                >
-                  <option value="string">String</option>
-                  <option value="number">Number</option>
-                  <option value="boolean">Boolean</option>
-                </select>
-                <input
-                  type="text"
-                  value={val.value}
-                  onChange={(e) => changeOutput(key, "value", e.target.value)}
-                  className="flex-1 bg-slate-800 text-slate-100 px-2 py-1 rounded"
-                  placeholder="Value"
-                />
+                <span className="text-sm text-slate-100 bg-slate-800 px-2 py-1 rounded flex-1 truncate">
+                  {key}
+                </span>
+                <span className="text-xs text-slate-400 bg-slate-800/50 px-2 py-1 rounded">
+                  {val.type}
+                </span>
                 <button
                   onClick={() => deleteOutput(key)}
                   className="text-rose-500 hover:text-rose-300"
@@ -172,12 +167,33 @@ export const ConfigFormBody: React.FC<ConfigFormBodyProps> = ({
                 </button>
               </div>
             ))}
-            <button
-              onClick={addOutput}
-              className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500"
-            >
-              Add Output
-            </button>
+            <div className="flex items-center gap-2 mt-1">
+              <input
+                type="text"
+                value={newFieldName}
+                onChange={(e) => setNewFieldName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddField()}
+                className="bg-slate-800 text-slate-100 px-2 py-1 rounded flex-1"
+                placeholder="Field name"
+              />
+              <select
+                value={newFieldType}
+                onChange={(e) => setNewFieldType(e.target.value as FieldType)}
+                className="bg-slate-800 text-slate-100 px-2 py-1 rounded"
+              >
+                {["string","email","number","boolean"].map((type) => (
+                  <option key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handleAddField}
+                className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-500"
+              >
+                Add Field
+              </button>
+            </div>
           </div>
         </div>
       )}
