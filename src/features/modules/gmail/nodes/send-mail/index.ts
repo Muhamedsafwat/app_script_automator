@@ -10,4 +10,5 @@ export const sendEmailNode: WorkflowNodeDefinition<typeof SendEmailSchema> = {
   schema: SendEmailSchema,
   ui: sendEmailUI,
   generator: generateSendEmail,
+  canHaveOutput: false,
 };

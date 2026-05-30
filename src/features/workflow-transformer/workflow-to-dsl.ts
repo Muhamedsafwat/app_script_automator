@@ -1,6 +1,7 @@
 import type { WorkflowStore } from "@/features/workflow-builder";
+import type { WorkflowDSL } from "./types/WorkflowDSL.inteface";
 
-export function workflowToDSL(workflow: WorkflowStore) {
+export function workflowToDSL(workflow: WorkflowStore): WorkflowDSL {
   const triggerNode = workflow.nodes.find((node) => {
     return node.kind == "trigger";
   });
@@ -30,9 +31,8 @@ export function workflowToDSL(workflow: WorkflowStore) {
 
     steps.push({
       id: nextNode.id,
-
       type: nextNode.definitionType,
-      config: nextNode.config,
+      config: nextNode.config as any,
     });
 
     currentNode = nextNode;
@@ -42,7 +42,7 @@ export function workflowToDSL(workflow: WorkflowStore) {
     trigger: {
       id: triggerNode.id,
       type: triggerNode.definitionType,
-      config: triggerNode.config,
+      config: triggerNode.config as any,
     },
     steps,
   };
