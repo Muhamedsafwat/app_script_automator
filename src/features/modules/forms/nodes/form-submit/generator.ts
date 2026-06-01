@@ -17,7 +17,5 @@ function setup() {
 }
 
 function onFormSubmit(e) {
-
-}
 `;
 }
