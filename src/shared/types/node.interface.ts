@@ -25,7 +25,7 @@ export interface NodeUIField<T> {
 export interface NodeUIConfig<T> {
   metadata: {
     label: string;
-    category: "GMAIL" | "FORMS";
+    category: string;
   };
   fields: NodeUIField<T>[];
 }
